@@ -4,7 +4,7 @@
 ![macOS](https://img.shields.io/badge/macOS-Ventura-blue)
 ![Bootloader](https://img.shields.io/badge/bootloader-OpenCore-informational)
 ![Status](https://img.shields.io/badge/status-experimental-orange)
-![License](https://img.shields.io/badge/license-See%20LICENSE-lightgrey)
+![License](https://img.shields.io/badge/license-MIT-lightgrey)
 
 EFI e documentação para Hackintosh no **Lenovo IdeaPad Gaming 3i 15IMH05 (82CG)**, utilizando **OpenCore** e **macOS Ventura**.
 
