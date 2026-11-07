@@ -2,11 +2,11 @@
 
 ![Platform](https://img.shields.io/badge/platform-Hackintosh-lightgrey)
 ![macOS](https://img.shields.io/badge/macOS-Ventura-blue)
-![Bootloader](https://img.shields.io/badge/bootloader-OpenCore-informational)
+![Bootloader](https://img.shields.io/badge/OpenCore-1.0.8-informational)
 ![Status](https://img.shields.io/badge/status-experimental-orange)
-![License](https://img.shields.io/badge/license-MIT-lightgrey)
+![License](https://img.shields.io/badge/license-See%20LICENSE-lightgrey)
 
-EFI e documentação para Hackintosh no **Lenovo IdeaPad Gaming 3i 15IMH05 (82CG)**, utilizando **OpenCore** e **macOS Ventura**.
+EFI e documentação para Hackintosh no **Lenovo IdeaPad Gaming 3i 15IMH05 (82CG)**, utilizando **OpenCore 1.0.8** e **macOS Ventura**.
 
 > ⚠️ **Aviso:** este repositório foi criado com base na configuração e experiência de instalação deste equipamento específico. Hackintosh não é oficialmente suportado pela Apple e os resultados podem variar entre máquinas, mesmo com hardware semelhante. Use por sua conta e risco.
 
@@ -14,6 +14,7 @@ EFI e documentação para Hackintosh no **Lenovo IdeaPad Gaming 3i 15IMH05 (82CG
 
 ## Índice
 
+- [Status atual](#status-atual)
 - [Hardware](#hardware)
 - [Estrutura do repositório](#estrutura-do-repositório)
 - [EFI](#efi)
@@ -28,23 +29,37 @@ EFI e documentação para Hackintosh no **Lenovo IdeaPad Gaming 3i 15IMH05 (82CG
 - [Atualizações](#atualizações)
 - [Referências](#referências)
 - [Informações do projeto](#informações-do-projeto)
+- [Aviso legal](#aviso-legal)
+
+---
+
+## Status atual
+
+| Item | Situação |
+| ---- | -------- |
+| **macOS em uso** | Ventura |
+| **OpenCore** | 1.0.8 (`config.plist` validado com `ocvalidate`, sem erros) |
+| **Kexts** | Atualizados, exceto `AirportItlwm` e `USBMap`; `VoodooI2C`, `VoodooI2CHID` e `VoodooPS2Controller` mantidos em versões anteriores (veja [Troubleshooting](#troubleshooting)) |
+| **Atualização para Sonoma/Sequoia** | Em andamento, ainda **não validada** nesta EFI |
+
+A EFI atual foi testada tanto a partir do pendrive quanto instalada na partição EFI do SSD, inicializando o Ventura normalmente.
 
 ---
 
 ## Hardware
 
 | Componente            | Especificação                           |
-| ---------------------- | ---------------------------------------- |
-| **Modelo**              | Lenovo IdeaPad Gaming 3i 15IMH05 / 82CG |
-| **CPU**                 | Intel Core i7-10750H                    |
-| **GPU integrada**       | Intel UHD Graphics 630                  |
-| **GPU dedicada**        | NVIDIA GeForce GTX 1650                 |
-| **RAM**                 | 16 GB DDR4 2933 MHz                     |
-| **Wi-Fi / Bluetooth**   | Intel Wi-Fi 6 AX201                     |
-| **Ethernet**            | Realtek RTL8111H                        |
-| **Áudio**               | Realtek ALC257                          |
-| **Bootloader**          | OpenCore                                |
-| **macOS**               | Ventura                                 |
+| --------------------- | --------------------------------------- |
+| **Modelo**            | Lenovo IdeaPad Gaming 3i 15IMH05 / 82CG |
+| **CPU**               | Intel Core i7-10750H                    |
+| **GPU integrada**     | Intel UHD Graphics 630                  |
+| **GPU dedicada**      | NVIDIA GeForce GTX 1650                 |
+| **RAM**               | 16 GB DDR4 2933 MHz                     |
+| **Wi-Fi / Bluetooth** | Intel Wi-Fi 6 AX201                     |
+| **Ethernet**          | Realtek RTL8111H                        |
+| **Áudio**             | Realtek ALC257                          |
+| **Bootloader**        | OpenCore 1.0.8                          |
+| **macOS**             | Ventura                                 |
 
 ### Sobre a GPU
 
@@ -56,7 +71,7 @@ A **NVIDIA GTX 1650** não possui suporte adequado nas versões modernas do macO
 
 ## Estrutura do repositório
 
-```text
+```
 .
 ├── EFI/
 │   └── OC/
@@ -82,16 +97,28 @@ A EFI deste repositório utiliza componentes específicos, selecionados de acord
 
 ### Kexts principais
 
-| Categoria       | Kexts                                                                 |
-| ---------------- | ---------------------------------------------------------------------- |
-| Núcleo            | `Lilu`, `WhateverGreen`, `VirtualSMC`                                  |
-| Sensores/SMC      | `SMCProcessor`, `SMCSuperIO`, `SMCBatteryManager`                      |
-| Áudio             | `AppleALC`                                                              |
-| Wi-Fi/Bluetooth   | `AirportItlwm`, `IntelBluetoothFirmware`, `BlueToolFixup`               |
-| Rede cabeada      | `RealtekRTL8111`                                                        |
-| Entrada/Trackpad  | `VoodooI2C`, `VoodooI2CHID`, `VoodooPS2Controller`                      |
-| USB               | `USBMap`                                                                |
-| Outros            | `CpuTscSync`, `BrightnessKeys`                                          |
+| Categoria        | Kexts                                                     |
+| ---------------- | --------------------------------------------------------- |
+| Núcleo           | `Lilu`, `WhateverGreen`, `VirtualSMC`                     |
+| Sensores/SMC     | `SMCProcessor`, `SMCSuperIO`, `SMCBatteryManager`         |
+| Áudio            | `AppleALC`                                                |
+| Wi-Fi/Bluetooth  | `AirportItlwm`, `IntelBluetoothFirmware`, `BlueToolFixup` |
+| Rede cabeada     | `RealtekRTL8111`                                          |
+| Entrada/Trackpad | `VoodooI2C`, `VoodooI2CHID`, `VoodooPS2Controller`        |
+| USB              | `USBMap`                                                  |
+| Outros           | `CpuTscSync`, `BrightnessKeys`                            |
+
+> **Atenção:** nesta máquina, as versões mais recentes de `VoodooI2C`, `VoodooI2CHID` e `VoodooPS2Controller` fizeram o cursor travar. Voltar os três para as versões anteriores resolveu. Se for atualizar, faça isso com backup e teste um kext por vez.
+
+### Boot-args
+
+Argumentos de boot atualmente utilizados:
+
+```
+-igfxblr igfxonln=a1 -igfxfbdump -v
+```
+
+`-v` habilita o modo verbose, útil para diagnóstico. Os demais argumentos estão relacionados à GPU integrada (WhateverGreen). Remova os de diagnóstico quando o sistema estiver estável, se desejar.
 
 ---
 
@@ -99,7 +126,7 @@ A EFI deste repositório utiliza componentes específicos, selecionados de acord
 
 A EFI utiliza SSDTs para corrigir e/ou adaptar componentes do firmware para funcionamento no macOS:
 
-```text
+```
 SSDT-AWAC.aml
 SSDT-DISABLE-NVIDIA.aml
 SSDT-EC-USBX.aml
@@ -146,7 +173,7 @@ Antes da instalação, entre na BIOS/UEFI e verifique as configurações relacio
 
 Prepare o pendrive com uma imagem compatível do macOS e copie a pasta `EFI` para a partição EFI do pendrive:
 
-```text
+```
 EFI/
 └── OC/
     ├── ACPI/
@@ -171,7 +198,7 @@ EFI/
 
 Copie a EFI para a partição EFI do SSD interno — não dependa do pendrive para inicializar o sistema:
 
-```text
+```
 EFI/
 └── OC/
     ├── ACPI/
@@ -185,23 +212,23 @@ EFI/
 
 ## Compatibilidade
 
-| Componente             | Status                          |
-| ------------------------ | --------------------------------- |
-| Intel UHD 630             | ✅ Funcionando                    |
-| NVIDIA GTX 1650           | 🚫 Desativada                     |
-| Wi-Fi Intel AX201         | ✅ Funcionando                    |
-| Bluetooth Intel AX201     | ✅ Funcionando                    |
-| Ethernet RTL8111H         | ✅ Funcionando                    |
-| Áudio Realtek ALC257      | ✅ Funcionando                    |
-| Microfone                 | ✅ Funcionando                    |
-| USB                       | ✅ Funcionando                    |
-| Teclado                   | ✅ Funcionando                    |
-| Trackpad                  | ⚠️ Pode apresentar limitações     |
-| HDMI                      | ⚠️ Pode apresentar limitações     |
-| Sleep                     | ⚠️ Pode apresentar limitações     |
-| AirDrop                   | ⚠️ Limitado com hardware Intel    |
+| Componente            | Status                         |
+| --------------------- | ------------------------------ |
+| Intel UHD 630         | ✅ Funcionando                  |
+| NVIDIA GTX 1650       | 🚫 Desativada                   |
+| Wi-Fi Intel AX201     | ✅ Funcionando                  |
+| Bluetooth Intel AX201 | ✅ Funcionando                  |
+| Ethernet RTL8111H     | ✅ Funcionando                  |
+| Áudio Realtek ALC257  | ✅ Funcionando                  |
+| Microfone             | ✅ Funcionando                  |
+| USB                   | ✅ Funcionando                  |
+| Teclado               | ✅ Funcionando                  |
+| Trackpad              | ⚠️ Pode apresentar limitações  |
+| HDMI                  | ⚠️ Pode apresentar limitações  |
+| Sleep                 | ⚠️ Pode apresentar limitações  |
+| AirDrop               | ⚠️ Limitado com hardware Intel |
 
-> Os estados acima representam o funcionamento observado/configurado neste projeto. Algumas funções podem depender da versão do macOS, BIOS, kexts e configuração utilizada.
+> Os estados acima representam o funcionamento observado/configurado neste projeto (macOS Ventura). Algumas funções podem depender da versão do macOS, BIOS, kexts e configuração utilizada.
 
 ---
 
@@ -217,12 +244,14 @@ Caso o áudio não funcione em uma instalação diferente, verifique o `layout-i
 
 O notebook utiliza **Intel Wi-Fi 6 AX201**, com suporte fornecido por kexts da comunidade:
 
-```text
+```
 AirportItlwm.kext
 IntelBluetoothFirmware.kext
 BlueToolFixup.kext
 ```
 
+> `AirportItlwm.kext` possui versões específicas para cada versão do macOS. Ao mudar de versão do sistema, troque também o kext.
+>
 > O funcionamento e os recursos disponíveis podem variar em relação aos Macs com hardware Apple nativo.
 
 ---
@@ -241,59 +270,51 @@ A GTX 1650 é desativada no macOS, pois GPUs NVIDIA desta geração não possuem
 
 ## Troubleshooting
 
-<details>
-<summary><strong>O OpenCore não aparece</strong></summary>
+**O OpenCore não aparece**
 
 Verifique:
+
 - Se a pasta `EFI` está na partição EFI correta
 - Se `BOOT/BOOTx64.efi` está presente
 - Se o boot está configurado como UEFI
 - Se o Secure Boot está desativado
 - Se a BIOS permite boot pelo dispositivo utilizado
 
-</details>
-
-<details>
-<summary><strong>O macOS trava durante o boot</strong></summary>
+**O macOS trava durante o boot**
 
 Verifique, em ordem:
-1. `config.plist`
+
+1. `config.plist` (valide com `ocvalidate`)
 2. Kexts
 3. SSDTs
 4. Versão do OpenCore
 5. Argumentos de boot (`boot-args`)
 
-Para diagnosticar, pode ser necessário habilitar o modo verbose.
+Para diagnosticar, pode ser necessário habilitar o modo verbose (`-v`).
 
-</details>
+**O cursor/trackpad trava após atualizar os kexts**
 
-<details>
-<summary><strong>A GTX 1650 aparece no sistema</strong></summary>
+Neste equipamento, o problema ocorreu ao atualizar `VoodooI2C`, `VoodooI2CHID` e `VoodooPS2Controller` para as versões mais recentes. Voltar os três para as versões anteriores resolveu.
+
+**O instalador do macOS carrega e volta ao menu do OpenCore**
+
+Comportamento observado nas tentativas de instalar o Sonoma sobre esta EFI: o instalador roda, o sistema reinicia e o menu do OpenCore passa a mostrar apenas a entrada "macOS", que inicia o Ventura. Ainda sem solução definitiva neste projeto.
+
+**A GTX 1650 aparece no sistema**
 
 Verifique se `SSDT-DISABLE-NVIDIA.aml` está presente e habilitado no `config.plist`.
 
-</details>
-
-<details>
-<summary><strong>Wi-Fi não funciona</strong></summary>
+**Wi-Fi não funciona**
 
 Verifique `AirportItlwm.kext` e confirme se a versão do kext corresponde à versão do macOS instalada.
 
-</details>
-
-<details>
-<summary><strong>Bluetooth não funciona</strong></summary>
+**Bluetooth não funciona**
 
 Verifique se `IntelBluetoothFirmware.kext` e `BlueToolFixup.kext` estão presentes.
 
-</details>
-
-<details>
-<summary><strong>Áudio não funciona</strong></summary>
+**Áudio não funciona**
 
 Verifique `AppleALC.kext` e o `layout-id` configurado no `config.plist`.
-
-</details>
 
 ---
 
@@ -304,10 +325,12 @@ Antes de atualizar o macOS ou substituir kexts:
 1. Faça backup da EFI atual.
 2. Verifique a compatibilidade da nova versão.
 3. Atualize os kexts necessários.
-4. Atualize o OpenCore quando necessário.
-5. Teste primeiro utilizando um backup funcional.
+4. Atualize o OpenCore quando necessário e valide o `config.plist` com `ocvalidate`.
+5. Teste primeiro utilizando um backup funcional (por exemplo, a EFI no pendrive) antes de gravar no SSD.
 
 > Não substitua todos os componentes da EFI indiscriminadamente.
+
+> A atualização do Ventura para o Sonoma/Sequoia com esta EFI ainda não foi validada. Veja [Status atual](#status-atual).
 
 ---
 
@@ -326,18 +349,18 @@ Antes de atualizar o macOS ou substituir kexts:
 
 ## Informações do projeto
 
-| Item          | Valor                                    |
-| -------------- | ------------------------------------------ |
-| **Modelo**      | Lenovo IdeaPad Gaming 3i 15IMH05 / 82CG   |
-| **CPU**         | Intel Core i7-10750H                      |
-| **GPU**         | Intel UHD Graphics 630                    |
-| **dGPU**        | NVIDIA GTX 1650                           |
-| **RAM**         | 16 GB DDR4                                |
-| **Wi-Fi**       | Intel AX201                               |
-| **Ethernet**    | Realtek RTL8111H                          |
-| **Áudio**       | Realtek ALC257                            |
-| **Bootloader**  | OpenCore                                  |
-| **macOS**       | Ventura                                   |
+| Item           | Valor                                   |
+| -------------- | --------------------------------------- |
+| **Modelo**     | Lenovo IdeaPad Gaming 3i 15IMH05 / 82CG |
+| **CPU**        | Intel Core i7-10750H                    |
+| **GPU**        | Intel UHD Graphics 630                  |
+| **dGPU**       | NVIDIA GTX 1650                         |
+| **RAM**        | 16 GB DDR4                              |
+| **Wi-Fi**      | Intel AX201                             |
+| **Ethernet**   | Realtek RTL8111H                        |
+| **Áudio**      | Realtek ALC257                          |
+| **Bootloader** | OpenCore 1.0.8                          |
+| **macOS**      | Ventura                                 |
 
 ---
 
